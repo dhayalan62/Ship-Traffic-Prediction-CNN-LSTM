@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ship Route Search</title>
+
+    <link rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+
+        body{
+            margin:0;
+            padding:0;
+            font-family:Arial, sans-serif;
+            background:#f1f5f9;
+        }
+
+        .container{
+            width:90%;
+            margin:auto;
+            margin-top:20px;
+        }
+
+        h1{
+            text-align:center;
+            color:#2563eb;
+        }
+
+        input{
+            width:250px;
+            padding:10px;
+            margin:10px;
+            border:1px solid #ccc;
+            border-radius:5px;
+        }
+
+        button{
+            padding:10px 20px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#1d4ed8;
+        }
+
+        #distance{
+            font-size:20px;
+            font-weight:bold;
+            margin-top:20px;
+            color:#0f172a;
+        }
+
+        #map{
+            height:500px;
+            width:100%;
+            margin-top:20px;
+            border-radius:10px;
+            border:2px solid #ccc;
+        }
+
+        .back{
+            display:inline-block;
+            margin-top:20px;
+            text-decoration:none;
+            color:white;
+            background:#0f172a;
+            padding:10px 20px;
+            border-radius:5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Ship Route Search</h1>
+
+    <input
+    type="text"
+    placeholder="Source Location">
+
+    <input
+    type="text"
+    placeholder="Destination Location">
+
+    <button>
+        Find Route
+    </button>
+
+    <div id="distance">
+        Distance : 0 KM
+    </div>
+
+    <div id="map"></div>
+
+    <a href="/dashboard" class="back">
+        Back to Dashboard
+    </a>
+
+</div>
+
+<script>
+
+var map = L.map('map').setView([13.0827,80.2707],6);
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+    maxZoom:19
+}
+).addTo(map);
+
+var sourceMarker;
+var destinationMarker;
+
+var sourceLatLng;
+var destinationLatLng;
+
+var routeLine;
+
+map.on('click', function(e){
+
+    if(!sourceMarker){
+
+        sourceLatLng = e.latlng;
+
+        sourceMarker = L.marker(e.latlng)
+        .addTo(map)
+        .bindPopup("Source Location")
+        .openPopup();
+
+    }
+
+    else if(!destinationMarker){
+
+        destinationLatLng = e.latlng;
+
+        destinationMarker = L.marker(e.latlng)
+        .addTo(map)
+        .bindPopup("Destination Location")
+        .openPopup();
+
+        calculateDistance();
+
+    }
+
+});
+
+function calculateDistance(){
+
+    var distance =
+    sourceLatLng.distanceTo(destinationLatLng);
+
+    document.getElementById("distance")
+    .innerHTML =
+    "Distance : " +
+    (distance/1000).toFixed(2) +
+    " KM";
+
+    routeLine = L.polyline(
+    [
+        sourceLatLng,
+        destinationLatLng
+    ],
+    {
+        color:'blue',
+        weight:5
+    }).addTo(map);
+
+}
+
+</script>
+
+</body>
+</html>
